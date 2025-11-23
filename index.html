@@ -1,69 +1,95 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Crypto & Forex Live Tracker Pro</title>
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyperliquid Whale Tracker - Real-Time</title>
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Crypto & Forex Live Pro</h1>
-            <p class="subtitle">Click vào coin hoặc cặp Forex → xem biểu đồ 7 ngày chi tiết</p>
-            <div class="last-update">Đang tải dữ liệu...</div>
+            <h1><i class="fas fa-whale"></i> Hyperliquid Whale Tracker</h1>
+            <p class="subtitle">Theo dõi vị thế cá voi, PnL, funding & long/short ratios real-time</p>
+            <div class="last-update">Đang tải dữ liệu... <i class="fas fa-sync-alt fa-spin"></i></div>
         </header>
 
         <div class="grid">
-            <section class="card crypto">
-                <h2>Cryptocurrency</h2>
-                <div id="crypto-list" class="price-grid"></div>
+            <!-- Positions & PnL Cards -->
+            <section class="card positions">
+                <h2>Vị Thế Cá Voi</h2>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <label>Long Position</label>
+                        <div class="value green">$<span id="long-pos">0</span>B</div>
+                    </div>
+                    <div class="metric">
+                        <label>Short Position</label>
+                        <div class="value red">$<span id="short-pos">0</span>B</div>
+                    </div>
+                    <div class="metric">
+                        <label>Long PnL</label>
+                        <div class="value green">$<span id="long-pnl">0</span>M</div>
+                    </div>
+                    <div class="metric">
+                        <label>Short PnL</label>
+                        <div class="value red">$<span id="short-pnl">0</span>M</div>
+                    </div>
+                </div>
             </section>
 
-            <section class="card forex">
-                <h2>Forex (vs USD)</h2>
-                <div id="forex-list" class="price-grid"></div>
+            <!-- Funding Fees -->
+            <section class="card funding">
+                <h2>Funding Fees</h2>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <label>Long Funding</label>
+                        <div class="value green">-$<span id="long-funding">0</span>M</div>
+                    </div>
+                    <div class="metric">
+                        <label>Short Funding</label>
+                        <div class="value red">$<span id="short-funding">0</span>M</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Latest Whale Activity Table -->
+            <section class="card activity">
+                <h2>Hoạt Động Cá Voi Mới Nhất</h2>
+                <div class="table-container">
+                    <table id="activity-table">
+                        <thead>
+                            <tr><th>Kích Thước</th><th>Cặp</th><th>Hành Động</th><th>Giá</th><th>Thời Gian</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Long/Short Ratios Chart -->
+            <section class="card ratios">
+                <h2>Long/Short Trader Ratio</h2>
+                <canvas id="ratioChart"></canvas>
+                <div class="ratio-bars">
+                    <div class="bar-item">
+                        <span>BTC</span>
+                        <div class="bar"><div class="fill" id="btc-long">0%</div><div class="fill short" id="btc-short">0%</div></div>
+                    </div>
+                    <div class="bar-item">
+                        <span>ETH</span>
+                        <div class="bar"><div class="fill" id="eth-long">0%</div><div class="fill short" id="eth-short">0%</div></div>
+                    </div>
+                    <!-- Thêm SOL, XRP... tương tự -->
+                </div>
             </section>
         </div>
 
         <footer>
-            <p>© 2025 Crypto & Forex Live Pro • Dữ liệu từ CoinGecko & ExchangeRate-API</p>
+            <p>© 2025 Hyperliquid Whale Tracker • Dữ liệu từ CoinGlass | Cập nhật mỗi 30s</p>
         </footer>
-    </div>
-
-    <!-- Modal chi tiết + biểu đồ -->
-    <div id="chart-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Chi tiết</h3>
-                <span class="close">×</span>
-            </div>
-
-            <!-- Tab Crypto / Forex -->
-            <div class="tab-buttons">
-                <button class="tab-btn active" data-tab="chart">Biểu đồ 7 ngày</button>
-                <button class="tab-btn" data-tab="info">Thông tin chi tiết</button>
-            </div>
-
-            <div id="tab-chart" class="tab-content active">
-                <div class="chart-container">
-                    <canvas id="priceChart"></canvas>
-                </div>
-            </div>
-
-            <div id="tab-info" class="tab-content">
-                <div class="info-grid" id="detail-info"></div>
-            </div>
-
-            <div class="chart-info">
-                <small id="chart-source">Nguồn: CoinGecko</small>
-            </div>
-        </div>
     </div>
 
     <script src="script.js"></script>
