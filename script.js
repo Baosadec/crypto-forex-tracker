@@ -167,7 +167,7 @@ async function fetchForex() {
 
 // Lấy dữ liệu Chứng khoán Mỹ (Alpha Vantage free API - thay YOUR_KEY bằng key miễn phí từ alphavantage.co)
 async function fetchStocks() {
-    const API_KEY = 'demo'; // Thay bằng key thật từ https://www.alphavantage.co/support/#api-key
+    const API_KEY = '6ZMJ70CKHFXM0H0L'; // Thay bằng key thật từ https://www.alphavantage.co/support/#api-key
     try {
         // S&P 500
         const spRes = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=SPY&apikey=${API_KEY}`);
