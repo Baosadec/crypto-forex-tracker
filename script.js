@@ -1,74 +1,58 @@
 const tableBody = document.getElementById("tableBody");
 const tableHead = document.getElementById("tableHead");
+const loading = document.getElementById("loading");
+const tableContainer = document.getElementById("tableContainer");
 const modal = document.getElementById("detailModal");
 const closeBtn = document.querySelector(".close");
-const tfBtns = document.querySelectorAll(".tf-btn");
-let currentCoin = null;
 let priceChart = null;
+let currentCoin = null;
 
 // Đóng modal
 closeBtn.onclick = () => modal.style.display = "none";
 window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
 
 // Chuyển khung thời gian
-tfBtns.forEach(btn => {
+document.querySelectorAll(".tf-btn").forEach(btn => {
     btn.onclick = () => {
-        tfBtns.forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tf-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         loadChart(currentCoin, btn.dataset.days);
     };
 });
 
-// Mở modal + load chart mặc định 7d
-async function openDetail(coin) {
+// Mở modal + load chart
+function openDetail(coin) {
     currentCoin = coin;
     document.getElementById("modalIcon").src = coin.image || "https://via.placeholder.com/70";
     document.getElementById("modalName").textContent = coin.name || coin.symbol;
-    document.getElementById("modalSymbol").textContent = coin.symbol;
-
-    document.getElementById("statPrice").textContent = "$" + (coin.price || coin.rate || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 6});
+    document.getElementById("modalSymbol").textContent = coin.symbol || "";
+    document.getElementById("statPrice").textContent = "$" + coin.price.toLocaleString();
     document.getElementById("statChange").textContent = (coin.change24h >= 0 ? "+" : "") + coin.change24h.toFixed(2) + "%";
     document.getElementById("statChange").className = coin.change24h >= 0 ? "positive" : "negative";
-    document.getElementById("statMarketCap").textContent = "$" + formatNumber(coin.marketCap || coin.volume24h || 0);
+    document.getElementById("statMarketCap").textContent = "$" + formatNumber(coin.marketCap || 0);
     document.getElementById("statVolume").textContent = "$" + formatNumber(coin.volume24h || 0);
     document.getElementById("statOI").textContent = "$" + formatNumber(coin.oi || 0);
     document.getElementById("statFunding").textContent = (coin.fundingRate || 0).toFixed(4) + "%";
 
     modal.style.display = "block";
-    loadChart(coin, 7); // Mặc định 7 ngày
+    loadChart(coin, 7);
 }
 
-// Load biểu đồ theo ngày
+// Load biểu đồ
 async function loadChart(coin, days) {
     try {
         const res = await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id || 'bitcoin'}/market_chart?vs_currency=usd&days=${days}`);
         const data = await res.json();
         const prices = data.prices;
-        const labels = prices.map(p => new Date(p[0]).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }));
+        const labels = prices.map(p => new Date(p[0]).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}));
         const values = prices.map(p => p[1]);
         const isUp = values[values.length-1] > values[0];
 
         if (priceChart) priceChart.destroy();
         priceChart = new Chart(document.getElementById("priceChart"), {
             type: 'line',
-            data: {
-                labels,
-                datasets: [{
-                    data: values,
-                    borderColor: isUp ? '#00ff96' : '#ff3366',
-                    backgroundColor: isUp ? 'rgba(0,255,150,0.15)' : 'rgba(255,51,102,0.15)',
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.1)' } } }
-            }
+            data: { labels, datasets: [{ data: values, borderColor: isUp ? '#00ff96' : '#ff3366', backgroundColor: isUp ? 'rgba(0,255,150,0.15)' : 'rgba(255,51,102,0.15)', fill: true, tension: 0.4, pointRadius: 0, borderWidth: 3 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.1)' } } } }
         });
     } catch (err) { console.log("Chart error"); }
 }
@@ -82,41 +66,65 @@ function formatNumber(n) {
     return n.toFixed(2);
 }
 
-// Render bảng (ví dụ Crypto)
-function renderCrypto(data) {
-    tableHead.innerHTML = `<tr>
-        <th>#</th><th>Ký hiệu</th><th>Giá</th><th>24h%</th><th>Funding</th><th>Khối lượng</th><th>Vốn hóa</th><th>OI</th>
-    </tr>`;
-    tableBody.innerHTML = data.map((c, i) => `
-        <tr onclick='openDetail(${JSON.stringify(c)})'>
+// Render bảng Crypto
+function renderCrypto(coins) {
+    tableHead.innerHTML = `<tr><th>#</th><th>Coin</th><th>Giá</th><th>24h%</th><th>Funding</th><th>Volume</th><th>Market Cap</th><th>OI</th></tr>`;
+    tableBody.innerHTML = coins.map((c, i) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
             <td>${i+1}</td>
-            <td><img src="${c.image}" alt=""> <strong>${c.symbol}</strong></td>
+            <td><img src="${c.image}" alt=""> <strong>${c.symbol.toUpperCase()}</strong></td>
             <td>$${c.price.toLocaleString()}</td>
             <td><span class="change ${c.change24h>=0?'positive':'negative'}">${c.change24h>=0?'+' : ''}${c.change24h.toFixed(2)}%</span></td>
-            <td>${c.fundingRate.toFixed(4)}%</td>
+            <td>${c.fundingRate?.toFixed(4)||'0.0000'}%</td>
             <td>$${formatNumber(c.volume24h)}</td>
             <td>$${formatNumber(c.marketCap)}</td>
-            <td>$${formatNumber(c.oi)}</td>
-        </tr>
-    `).join('');
+            <td>$${formatNumber(c.oi||0)}</td>
+        `;
+        row.onclick = () => openDetail(c);
+        return row.outerHTML;
+    }).join('');
+    loading.style.display = "none";
+    tableContainer.style.display = "block";
 }
 
-// Load dữ liệu (giữ nguyên logic cũ, chỉ cần gọi renderCrypto(allCrypto))
-async function loadAll() {
-    // ... (giữ nguyên fetchCrypto(), fetchForex(), fetchStocks() từ file trước)
-    // Ví dụ:
-    // await fetchCrypto(); renderCrypto(allCrypto);
+// Lấy dữ liệu Crypto
+async function loadCrypto() {
+    try {
+        const [cg, bin] = await Promise.all([
+            fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h").then(r=>r.json()),
+            fetch("https://fapi.binance.com/fapi/v1/premiumIndex").then(r=>r.json())
+        ]);
+        const oiMap = {};
+        bin.forEach(i => oiMap[i.symbol.replace("USDT","").toLowerCase()] = { oi: parseFloat(i.openInterest)*parseFloat(i.markPrice), funding: parseFloat(i.lastFundingRate)*100 });
+
+        const data = cg.map((c, i) => {
+            const key = c.symbol.toLowerCase();
+            const oi = oiMap[key] || { oi: 0, funding: 0 };
+            return {
+                rank: i+1, id: c.id, name: c.name, symbol: c.symbol.toUpperCase(), image: c.image,
+                price: c.current_price, change24h: c.price_change_percentage_24h || 0,
+                volume24h: c.total_volume || 0, marketCap: c.market_cap || 0,
+                oi: oi.oi, fundingRate: oi.funding
+            };
+        });
+        renderCrypto(data);
+    } catch (err) {
+        loading.textContent = "Lỗi tải dữ liệu. Đang thử lại...";
+        setTimeout(loadCrypto, 5000);
+    }
 }
 
-// Tab chuyển đổi
-document.querySelectorAll(".tab").forEach(t => {
-    t.onclick = () => {
-        document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
-        t.classList.add("active");
-        // render bảng tương ứng
+// Tab
+document.querySelectorAll(".tab").forEach(tab => {
+    tab.onclick = () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        if (tab.dataset.type === "crypto") loadCrypto();
+        // Thêm Forex & Stocks sau
     };
 });
 
 // Khởi chạy
-loadAll();
-setInterval(loadAll, 30000);
+loadCrypto();
+setInterval(loadCrypto, 30000);
