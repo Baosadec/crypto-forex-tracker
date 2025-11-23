@@ -14,7 +14,7 @@
         <header>
             <h1>Phân tích dữ liệu tiền mã hóa</h1>
             <div class="search-bar">
-                <input type="text" placeholder="Tìm kiếm..." id="searchInput">
+                <input type="text" placeholder="Tìm kiếm coin..." id="searchInput">
                 <i class="fas fa-search"></i>
             </div>
         </header>
@@ -34,10 +34,10 @@
                         <th>Ký hiệu</th>
                         <th>Giá</th>
                         <th>24h%</th>
-                        <th>Tỷ lệ funding</th>
+                        <th>Funding Rate</th>
                         <th>Khối lượng (24h)</th>
                         <th>Vốn hóa</th>
-                        <th>OI</th>
+                        <th>Open Interest</th>
                         <th>OI (24h%)</th>
                         <th>Thanh lý (24h)</th>
                     </tr>
@@ -53,8 +53,8 @@
                     <div class="coin-info-header">
                         <img id="modalImage" src="" alt="">
                         <div>
-                            <h2 id="modalName"></h2>
-                            <p id="modalSymbol"></p>
+                            <h2 id="modalName">Bitcoin</h2>
+                            <p id="modalSymbol">BTC</p>
                         </div>
                     </div>
                     <span class="close">×</span>
@@ -65,8 +65,8 @@
                     </div>
                     <div class="stats-grid">
                         <div class="stat"><span>Giá hiện tại</span><strong id="modalPrice">$0</strong></div>
-                        <div class="stat"><span>24h thay đổi</span><strong id="modalChange" class="positive">0%</strong></div>
-                        <div class="stat"><span>Vốn hóa</span><strong id="modalMarketCap">$0</strong></div>
+                        <div class="stat"><span>Thay đổi 24h</span><strong id="modalChange" class="positive">0%</strong></div>
+                        <div class="stat"><span>Vốn hóa thị trường</span><strong id="modalMarketCap">$0</strong></div>
                         <div class="stat"><span>Khối lượng 24h</span><strong id="modalVolume">$0</strong></div>
                         <div class="stat"><span>Open Interest</span><strong id="modalOI">$0</strong></div>
                         <div class="stat"><span>Funding Rate</span><strong id="modalFunding">0%</strong></div>
@@ -76,7 +76,7 @@
         </div>
 
         <footer>
-            <p>© 2025 Crypto Heatmap Pro • Nhấn vào coin để xem chi tiết</p>
+            <p>© 2025 Crypto Heatmap Pro • Nhấn vào coin để xem chi tiết • Cập nhật tự động</p>
         </footer>
     </div>
 
