@@ -1,89 +1,54 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hyperliquid Whale Tracker - Real-Time</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Crypto Heatmap Pro - Phân tích tiền mã hóa</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Hyperliquid Whale Tracker</h1>
-            <p class="subtitle">Theo dõi cá voi, PnL, funding & long/short ratio real-time</p>
-            <div class="last-update">Đang tải dữ liệu...</div>
+            <h1>Phân tích dữ liệu tiền mã hóa</h1>
+            <div class="search-bar">
+                <input type="text" placeholder="Tìm kiếm..." id="searchInput">
+                <i class="fas fa-search"></i>
+            </div>
         </header>
 
-        <div class="grid">
-            <!-- Vị thế & PnL -->
-            <section class="card">
-                <h2>Vị Thế Cá Voi</h2>
-                <div class="metrics">
-                    <div class="metric">
-                        <span>Long Position</span>
-                        <strong class="green">$<span id="longPos">0</span>B</strong>
-                    </div>
-                    <div class="metric">
-                        <span>Short Position</span>
-                        <strong class="red">$<span id="shortPos">0</span>B</strong>
-                    </div>
-                    <div class="metric">
-                        <span>Long PnL</span>
-                        <strong class="green">$<span id="longPnl">0</span>M</strong>
-                    </div>
-                    <div class="metric">
-                        <span>Short PnL</span>
-                        <strong class="red">$<span id="shortPnl">0</span>M</strong>
-                    </div>
-                </div>
-            </section>
+        <div class="tabs">
+            <button class="tab active" data-tab="all">Tất cả</button>
+            <button class="tab" data-tab="gainers">Tăng mạnh</button>
+            <button class="tab" data-tab="losers">Giảm mạnh</button>
+            <button class="tab" data-tab="volume">Khối lượng cao</button>
+        </div>
 
-            <!-- Funding -->
-            <section class="card">
-                <h2>Funding Fee</h2>
-                <div class="metrics">
-                    <div class="metric">
-                        <span>Long Funding</span>
-                        <strong class="green">-$<span id="longFunding">0</span>M</strong>
-                    </div>
-                    <div class="metric">
-                        <span>Short Funding</span>
-                        <strong class="red">$<span id="shortFunding">0</span>M</strong>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Hoạt động cá voi -->
-            <section class="card full">
-                <h2>Hoạt Động Cá Voi Mới Nhất</h2>
-                <div class="table-container">
-                    <table id="whaleTable">
-                        <thead>
-                            <tr>
-                                <th>TxID</th>
-                                <th>Cặp</th>
-                                <th>Hành động</th>
-                                <th>Position</th>
-                                <th>Giá</th>
-                                <th>Thời gian</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Long/Short Ratio -->
-            <section class="card full">
-                <h2>Long/Short Trader Ratio</h2>
-                <div class="ratio-list" id="ratioList"></div>
-            </section>
+        <div class="table-container">
+            <table id="cryptoTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ký hiệu</th>
+                        <th>Giá</th>
+                        <th>Giá (24h%)</th>
+                        <th>Tỷ lệ funding</th>
+                        <th>Khối lượng (24h)</th>
+                        <th>Khối lượng (24h%)</th>
+                        <th>Vốn hóa</th>
+                        <th>OI</th>
+                        <th>OI (1h%)</th>
+                        <th>OI (24h%)</th>
+                        <th>Thanh lý (24h)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
 
         <footer>
-            <p>© 2025 Hyperliquid Whale Tracker • Dữ liệu từ CoinGlass API • Cập nhật mỗi 20s</p>
+            <p>© 2025 Crypto Heatmap Pro • Dữ liệu từ CoinGecko & Binance • Cập nhật tự động</p>
         </footer>
     </div>
 
