@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Crypto Pro - Crypto, Forex & Stocks</title>
+    <title>Crypto Pro - Real-time Tracker</title>
     <link rel="stylesheet" href="style.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -17,12 +17,14 @@
         </header>
 
         <div class="tabs">
-            <button class="tab active" data-tab="crypto">Crypto</button>
-            <button class="tab" data-tab="forex">Forex</button>
-            <button class="tab" data-tab="stocks">Chứng khoán Mỹ</button>
+            <button class="tab active" data-type="crypto">Crypto</button>
+            <button class="tab" data-type="forex">Forex</button>
+            <button class="tab" data-type="stocks">Chứng khoán Mỹ</button>
         </div>
 
-        <div class="table-container">
+        <div class="loading" id="loading">Đang tải dữ liệu...</div>
+
+        <div class="table-container" id="tableContainer">
             <table id="mainTable">
                 <thead id="tableHead"></thead>
                 <tbody id="tableBody"></tbody>
@@ -30,7 +32,7 @@
         </div>
     </div>
 
-    <!-- Modal Chi Tiết -->
+    <!-- Modal -->
     <div id="detailModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -57,7 +59,7 @@
 
             <div class="stats-grid">
                 <div class="stat-card"><span>Giá hiện tại</span><strong id="statPrice">$0</strong></div>
-                <div class="stat-card"><span>Thay đổi 24h</span><strong id="statChange" class="positive">0%</strong></div>
+                <div class="stat-card"><span>Thay đổi 24h</span><strong id="statChange">0%</strong></div>
                 <div class="stat-card"><span>Vốn hóa</span><strong id="statMarketCap">$0</strong></div>
                 <div class="stat-card"><span>Khối lượng 24h</span><strong id="statVolume">$0</strong></div>
                 <div class="stat-card"><span>Open Interest</span><strong id="statOI">$0</strong></div>
