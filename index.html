@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Crypto & Forex Live Tracker</title>
+    <title>Crypto & Forex Live Tracker Pro</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
-    <!-- Chart.js + Luxon (cho trục thời gian đẹp) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
@@ -18,42 +14,54 @@
 <body>
     <div class="container">
         <header>
-            <h1> Crypto & Forex Live</h1>
-            <p class="subtitle">Cập nhật giá theo thời gian thực • Click vào coin để xem biểu đồ 7 ngày</p>
+            <h1>Crypto & Forex Live Pro</h1>
+            <p class="subtitle">Click vào coin hoặc cặp Forex → xem biểu đồ 7 ngày chi tiết</p>
             <div class="last-update">Đang tải dữ liệu...</div>
         </header>
 
         <div class="grid">
-            <!-- Crypto Section -->
             <section class="card crypto">
-                <h2> Cryptocurrency</h2>
+                <h2>Cryptocurrency</h2>
                 <div id="crypto-list" class="price-grid"></div>
             </section>
 
-            <!-- Forex Section -->
             <section class="card forex">
-                <h2> Forex (vs USD)</h2>
+                <h2>Forex (vs USD)</h2>
                 <div id="forex-list" class="price-grid"></div>
             </section>
         </div>
 
         <footer>
-            <p>© 2025 Crypto & Forex Live • Dữ liệu: CoinGecko & ExchangeRate-API</p>
+            <p>© 2025 Crypto & Forex Live Pro • Dữ liệu từ CoinGecko & ExchangeRate-API</p>
         </footer>
     </div>
 
-    <!-- Modal Biểu Đồ -->
+    <!-- Modal chi tiết + biểu đồ -->
     <div id="chart-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-title"> Bitcoin (BTC)</h3>
+                <h3 id="modal-title">Chi tiết</h3>
                 <span class="close">×</span>
             </div>
-            <div class="chart-container">
-                <canvas id="priceChart"></canvas>
+
+            <!-- Tab Crypto / Forex -->
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="chart">Biểu đồ 7 ngày</button>
+                <button class="tab-btn" data-tab="info">Thông tin chi tiết</button>
             </div>
+
+            <div id="tab-chart" class="tab-content active">
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+
+            <div id="tab-info" class="tab-content">
+                <div class="info-grid" id="detail-info"></div>
+            </div>
+
             <div class="chart-info">
-                <small>Dữ liệu giá 7 ngày gần nhất • Nguồn: CoinGecko</small>
+                <small id="chart-source">Nguồn: CoinGecko</small>
             </div>
         </div>
     </div>
