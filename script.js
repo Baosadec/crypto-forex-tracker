@@ -20,17 +20,17 @@ document.querySelectorAll(".tf-btn").forEach(btn => {
     };
 });
 
-// Mở modal + load chart
+// Mở modal
 function openDetail(coin) {
     currentCoin = coin;
-    document.getElementById("modalIcon").src = coin.image || "https://via.placeholder.com/70";
-    document.getElementById("modalName").textContent = coin.name || coin.symbol;
-    document.getElementById("modalSymbol").textContent = coin.symbol || "";
-    document.getElementById("statPrice").textContent = "$" + coin.price.toLocaleString();
+    document.getElementById("modalIcon").src = coin.image;
+    document.getElementById("modalName").textContent = coin.name;
+    document.getElementById("modalSymbol").textContent = coin.symbol.toUpperCase();
+    document.getElementById("statPrice").textContent = "$" + coin.price.toLocaleString('en-US', {minimumFractionDigits: 2});
     document.getElementById("statChange").textContent = (coin.change24h >= 0 ? "+" : "") + coin.change24h.toFixed(2) + "%";
     document.getElementById("statChange").className = coin.change24h >= 0 ? "positive" : "negative";
-    document.getElementById("statMarketCap").textContent = "$" + formatNumber(coin.marketCap || 0);
-    document.getElementById("statVolume").textContent = "$" + formatNumber(coin.volume24h || 0);
+    document.getElementById("statMarketCap").textContent = "$" + formatNumber(coin.marketCap);
+    document.getElementById("statVolume").textContent = "$" + formatNumber(coin.volume24h);
     document.getElementById("statOI").textContent = "$" + formatNumber(coin.oi || 0);
     document.getElementById("statFunding").textContent = (coin.fundingRate || 0).toFixed(4) + "%";
 
@@ -41,7 +41,7 @@ function openDetail(coin) {
 // Load biểu đồ
 async function loadChart(coin, days) {
     try {
-        const res = await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id || 'bitcoin'}/market_chart?vs_currency=usd&days=${days}`);
+        const res = await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id}/market_chart?vs_currency=usd&days=${days}`);
         const data = await res.json();
         const prices = data.prices;
         const labels = prices.map(p => new Date(p[0]).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}));
@@ -68,13 +68,16 @@ function formatNumber(n) {
 
 // Render bảng Crypto
 function renderCrypto(coins) {
-    tableHead.innerHTML = `<tr><th>#</th><th>Coin</th><th>Giá</th><th>24h%</th><th>Funding</th><th>Volume</th><th>Market Cap</th><th>OI</th></tr>`;
-    tableBody.innerHTML = coins.map((c, i) => {
+    tableHead.innerHTML = `<tr>
+        <th>#</th><th>Coin</th><th>Giá</th><th>24h%</th><th>Funding</th><th>Volume</th><th>Market Cap</th><th>OI</th>
+    </tr>`;
+    tableBody.innerHTML = "";
+    coins.forEach((c, i) => {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${i+1}</td>
             <td><img src="${c.image}" alt=""> <strong>${c.symbol.toUpperCase()}</strong></td>
-            <td>$${c.price.toLocaleString()}</td>
+            <td>$${c.price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:6})}</td>
             <td><span class="change ${c.change24h>=0?'positive':'negative'}">${c.change24h>=0?'+' : ''}${c.change24h.toFixed(2)}%</span></td>
             <td>${c.fundingRate?.toFixed(4)||'0.0000'}%</td>
             <td>$${formatNumber(c.volume24h)}</td>
@@ -82,8 +85,8 @@ function renderCrypto(coins) {
             <td>$${formatNumber(c.oi||0)}</td>
         `;
         row.onclick = () => openDetail(c);
-        return row.outerHTML;
-    }).join('');
+        tableBody.appendChild(row);
+    });
     loading.style.display = "none";
     tableContainer.style.display = "block";
 }
@@ -91,26 +94,34 @@ function renderCrypto(coins) {
 // Lấy dữ liệu Crypto
 async function loadCrypto() {
     try {
+        loading.style.display = "block";
+        tableContainer.style.display = "none";
+
         const [cg, bin] = await Promise.all([
             fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&price_change_percentage=24h").then(r=>r.json()),
             fetch("https://fapi.binance.com/fapi/v1/premiumIndex").then(r=>r.json())
         ]);
-        const oiMap = {};
-        bin.forEach(i => oiMap[i.symbol.replace("USDT","").toLowerCase()] = { oi: parseFloat(i.openInterest)*parseFloat(i.markPrice), funding: parseFloat(i.lastFundingRate)*100 });
 
-        const data = cg.map((c, i) => {
+        const oiMap = {};
+        bin.forEach(i => {
+            const key = i.symbol.replace("USDT","").toLowerCase();
+            oiMap[key] = { oi: parseFloat(i.openInterest)*parseFloat(i.markPrice), funding: parseFloat(i.lastFundingRate)*100 };
+        });
+
+        const data = cg.map(c => {
             const key = c.symbol.toLowerCase();
             const oi = oiMap[key] || { oi: 0, funding: 0 };
             return {
-                rank: i+1, id: c.id, name: c.name, symbol: c.symbol.toUpperCase(), image: c.image,
+                id: c.id, name: c.name, symbol: c.symbol.toUpperCase(), image: c.image,
                 price: c.current_price, change24h: c.price_change_percentage_24h || 0,
                 volume24h: c.total_volume || 0, marketCap: c.market_cap || 0,
                 oi: oi.oi, fundingRate: oi.funding
             };
         });
+
         renderCrypto(data);
     } catch (err) {
-        loading.textContent = "Lỗi tải dữ liệu. Đang thử lại...";
+        loading.innerHTML = "Lỗi kết nối. Đang thử lại...";
         setTimeout(loadCrypto, 5000);
     }
 }
@@ -121,7 +132,7 @@ document.querySelectorAll(".tab").forEach(tab => {
         document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
         if (tab.dataset.type === "crypto") loadCrypto();
-        // Thêm Forex & Stocks sau
+        // Forex & Stocks sẽ thêm sau
     };
 });
 
