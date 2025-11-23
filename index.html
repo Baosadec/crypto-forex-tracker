@@ -7,88 +7,83 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-whale"></i> Hyperliquid Whale Tracker</h1>
-            <p class="subtitle">Theo dõi vị thế cá voi, PnL, funding & long/short ratios real-time</p>
-            <div class="last-update">Đang tải dữ liệu... <i class="fas fa-sync-alt fa-spin"></i></div>
+            <h1>Hyperliquid Whale Tracker</h1>
+            <p class="subtitle">Theo dõi cá voi, PnL, funding & long/short ratio real-time</p>
+            <div class="last-update">Đang tải dữ liệu...</div>
         </header>
 
         <div class="grid">
-            <!-- Positions & PnL Cards -->
-            <section class="card positions">
+            <!-- Vị thế & PnL -->
+            <section class="card">
                 <h2>Vị Thế Cá Voi</h2>
-                <div class="metrics-grid">
+                <div class="metrics">
                     <div class="metric">
-                        <label>Long Position</label>
-                        <div class="value green">$<span id="long-pos">0</span>B</div>
+                        <span>Long Position</span>
+                        <strong class="green">$<span id="longPos">0</span>B</strong>
                     </div>
                     <div class="metric">
-                        <label>Short Position</label>
-                        <div class="value red">$<span id="short-pos">0</span>B</div>
+                        <span>Short Position</span>
+                        <strong class="red">$<span id="shortPos">0</span>B</strong>
                     </div>
                     <div class="metric">
-                        <label>Long PnL</label>
-                        <div class="value green">$<span id="long-pnl">0</span>M</div>
+                        <span>Long PnL</span>
+                        <strong class="green">$<span id="longPnl">0</span>M</strong>
                     </div>
                     <div class="metric">
-                        <label>Short PnL</label>
-                        <div class="value red">$<span id="short-pnl">0</span>M</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Funding Fees -->
-            <section class="card funding">
-                <h2>Funding Fees</h2>
-                <div class="metrics-grid">
-                    <div class="metric">
-                        <label>Long Funding</label>
-                        <div class="value green">-$<span id="long-funding">0</span>M</div>
-                    </div>
-                    <div class="metric">
-                        <label>Short Funding</label>
-                        <div class="value red">$<span id="short-funding">0</span>M</div>
+                        <span>Short PnL</span>
+                        <strong class="red">$<span id="shortPnl">0</span>M</strong>
                     </div>
                 </div>
             </section>
 
-            <!-- Latest Whale Activity Table -->
-            <section class="card activity">
+            <!-- Funding -->
+            <section class="card">
+                <h2>Funding Fee</h2>
+                <div class="metrics">
+                    <div class="metric">
+                        <span>Long Funding</span>
+                        <strong class="green">-$<span id="longFunding">0</span>M</strong>
+                    </div>
+                    <div class="metric">
+                        <span>Short Funding</span>
+                        <strong class="red">$<span id="shortFunding">0</span>M</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hoạt động cá voi -->
+            <section class="card full">
                 <h2>Hoạt Động Cá Voi Mới Nhất</h2>
                 <div class="table-container">
-                    <table id="activity-table">
+                    <table id="whaleTable">
                         <thead>
-                            <tr><th>Kích Thước</th><th>Cặp</th><th>Hành Động</th><th>Giá</th><th>Thời Gian</th></tr>
+                            <tr>
+                                <th>TxID</th>
+                                <th>Cặp</th>
+                                <th>Hành động</th>
+                                <th>Position</th>
+                                <th>Giá</th>
+                                <th>Thời gian</th>
+                            </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- Long/Short Ratios Chart -->
-            <section class="card ratios">
+            <!-- Long/Short Ratio -->
+            <section class="card full">
                 <h2>Long/Short Trader Ratio</h2>
-                <canvas id="ratioChart"></canvas>
-                <div class="ratio-bars">
-                    <div class="bar-item">
-                        <span>BTC</span>
-                        <div class="bar"><div class="fill" id="btc-long">0%</div><div class="fill short" id="btc-short">0%</div></div>
-                    </div>
-                    <div class="bar-item">
-                        <span>ETH</span>
-                        <div class="bar"><div class="fill" id="eth-long">0%</div><div class="fill short" id="eth-short">0%</div></div>
-                    </div>
-                    <!-- Thêm SOL, XRP... tương tự -->
-                </div>
+                <div class="ratio-list" id="ratioList"></div>
             </section>
         </div>
 
         <footer>
-            <p>© 2025 Hyperliquid Whale Tracker • Dữ liệu từ CoinGlass | Cập nhật mỗi 30s</p>
+            <p>© 2025 Hyperliquid Whale Tracker • Dữ liệu từ CoinGlass API • Cập nhật mỗi 20s</p>
         </footer>
     </div>
 
