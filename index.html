@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -32,13 +33,11 @@
                         <th>#</th>
                         <th>Ký hiệu</th>
                         <th>Giá</th>
-                        <th>Giá (24h%)</th>
+                        <th>24h%</th>
                         <th>Tỷ lệ funding</th>
                         <th>Khối lượng (24h)</th>
-                        <th>Khối lượng (24h%)</th>
                         <th>Vốn hóa</th>
                         <th>OI</th>
-                        <th>OI (1h%)</th>
                         <th>OI (24h%)</th>
                         <th>Thanh lý (24h)</th>
                     </tr>
@@ -47,8 +46,37 @@
             </table>
         </div>
 
+        <!-- Modal Chi Tiết Coin -->
+        <div id="coinModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="coin-info-header">
+                        <img id="modalImage" src="" alt="">
+                        <div>
+                            <h2 id="modalName"></h2>
+                            <p id="modalSymbol"></p>
+                        </div>
+                    </div>
+                    <span class="close">×</span>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-container">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat"><span>Giá hiện tại</span><strong id="modalPrice">$0</strong></div>
+                        <div class="stat"><span>24h thay đổi</span><strong id="modalChange" class="positive">0%</strong></div>
+                        <div class="stat"><span>Vốn hóa</span><strong id="modalMarketCap">$0</strong></div>
+                        <div class="stat"><span>Khối lượng 24h</span><strong id="modalVolume">$0</strong></div>
+                        <div class="stat"><span>Open Interest</span><strong id="modalOI">$0</strong></div>
+                        <div class="stat"><span>Funding Rate</span><strong id="modalFunding">0%</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <footer>
-            <p>© 2025 Crypto Heatmap Pro • Dữ liệu từ CoinGecko & Binance • Cập nhật tự động</p>
+            <p>© 2025 Crypto Heatmap Pro • Nhấn vào coin để xem chi tiết</p>
         </footer>
     </div>
 
